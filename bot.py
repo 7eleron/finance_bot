@@ -1,4 +1,5 @@
 import os
+from message_texts import GREETINGS, HELP
 import logging
 from telegram import Update
 from telegram.ext import ApplicationBuilder, ContextTypes, CommandHandler
@@ -20,7 +21,18 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         return
     await context.bot.send_message(
         chat_id=effective_chat.id,
-        text="I'm a bot, please talk to me!"
+        text=GREETINGS
+    )
+
+
+async def help(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    effective_chat = update.effective_chat
+    if not effective_chat:
+        logger.warning("effective_chat is None")
+        return
+    await context.bot.send_message(
+        chat_id=effective_chat.id,
+        text=HELP
     )
 
 
@@ -29,5 +41,7 @@ if __name__ == '__main__':
 
     start_handler = CommandHandler('start', start)
     application.add_handler(start_handler)
+    help_handler = CommandHandler('help', help)
+    application.add_handler(help_handler)
 
     application.run_polling()
